@@ -13,3 +13,12 @@ test: dinamicArray.o test.o
 
 clean: 
 	rm -rf *.o *.d *.gcno *.s *.gcda *.gcov test
+
+valgrind: test
+	valgrind ./test
+
+gcov: run_tests
+	gcov -acdfu dinamicArray.c
+
+run_tests: test
+	./test

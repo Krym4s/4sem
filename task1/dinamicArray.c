@@ -1,79 +1,16 @@
 #include "dinamicArray.h"
 
+struct dinamic_array
+{
+  unsigned capacity;
+  unsigned elemSize;
+
+  void* buffer;
+};
+
 const unsigned probability = 50;
 const double EnlargeCoef = 2;
 static unsigned turn = 0;
-
-void* MyMalloc (unsigned size)
-{
-  turn++;
-
-  if (turn % probability == 0)
-    return NULL;
-
-  return malloc (size);
-}
-
-void* MyRealloc (void* ptr, unsigned size)
-{
-  assert (ptr);
-  turn++;
-
-  if (turn % probability == 0)
-    return NULL;
-
-  return realloc (ptr, size);
-}
-
-enum ArrayErrors DestructArray (struct dinamic_array* array)
-{
-  assert (array);
-
-  free (array->buffer);
-  array->capacity = 0;
-  array->elemSize = 0;
-  return NO_ERRORS;
-}
-
-enum ArrayErrors ConstructArray (struct dinamic_array* array, unsigned size, unsigned elementSize)
-{
-  assert (array);
-  
-  array->elemSize = elementSize;
-  array->buffer = MyMalloc (size * elementSize);
-  if (!array->buffer)
-    return BAD_ALLOC;
-
-  array->capacity = size;
-
-  return NO_ERRORS;
-}
-
-enum ArrayErrors ResizeBuffer (struct dinamic_array* array, unsigned size)
-{
-  assert (array);
-  assert (array->buffer);
-
-  void* tempPtr = MyRealloc(array->buffer, size * array->elemSize);
-  if (!tempPtr)
-    return BAD_ALLOC;
-
-  array->capacity = size;
-  array->buffer = tempPtr;
-  return NO_ERRORS;
-}
-
-enum ArrayErrors InsertElement (struct dinamic_array* array, unsigned index, void* element)
-{
-  assert (array);
-  assert (array->buffer);
-
-  if (index >= array->capacity)
-    return OUT_OF_BORDERS;
-
-  memcpy (array->buffer + index * array->elemSize, element, array->elemSize);
-  return NO_ERRORS;
-}
 
 void* GetElement (struct dinamic_array* array, unsigned index)
 {
@@ -101,18 +38,104 @@ enum ArrayErrors foreach (struct dinamic_array* array, enum ArrayErrors (*hook)(
   return NO_ERRORS;
 }
 
-void Dump (struct dinamic_array* array, int (*print)(void *))
+void Dump (struct dinamic_array* array, enum ArrayErrors (*print)(struct dinamic_array*, unsigned, void *))
+{
+    assert (array);
+    assert (print);
+
+    printf ("Dinamic array [%p]\n{\n", array);
+    printf ("\tcapacity - %u\n", array->capacity);
+    printf ("\telenSize - %u\n", array->elemSize);
+
+    printf ("\tbuffer - [%p]\n", array->buffer);
+
+    foreach (array, print, NULL);
+    printf ("}\n");
+}
+
+void* MyMalloc (unsigned size)
+{
+  turn++;
+
+  if (turn % probability == 0)
+    return NULL;
+
+  return malloc (size);
+}
+
+void* MyRealloc (void* ptr, unsigned size)
+{
+  assert (ptr);
+  turn++;
+
+  if (turn % probability == 0)
+    return NULL;
+
+  return realloc (ptr, size);
+}
+
+enum ArrayErrors ConstructArray (struct dinamic_array** array, unsigned size, unsigned elementSize)
+{
+  *array = MyMalloc (sizeof (struct dinamic_array));
+  if (!(*array))
+    return BAD_ALLOC;
+  (*array)->elemSize = elementSize;
+  (*array)->buffer = MyMalloc (size * elementSize);
+  if (!(*array)->buffer)
+  {
+      free(*array);
+      return BAD_ALLOC;
+  }
+    
+  (*array)->capacity = size;
+
+  return NO_ERRORS;
+}
+
+enum ArrayErrors DestructArray (struct dinamic_array* array)
 {
   assert (array);
-  assert (print);
+  assert (array->buffer);
 
-  printf ("Dinamic array [%p]\n{\n", array);
-  printf ("\tcapacity - %u\n", array->capacity);
-  printf ("\telenSize - %u\n", array->elemSize);
+  free (array->buffer);
+  free (array);
+  return NO_ERRORS;
+}
 
-  printf ("\tbuffer - [%p]\n", array->buffer);
-  for (unsigned idx = 0; idx < array->capacity; idx++)
-    print (array->buffer + array->elemSize * idx);
+unsigned GetArraySize (struct dinamic_array* array)
+{
+    assert (array);
+    return array->capacity;
+}
 
-  printf ("}\n");
+unsigned GetElementSize (struct dinamic_array* array)
+{
+    assert (array);
+    return array->elemSize;
+}
+
+enum ArrayErrors ResizeBuffer (struct dinamic_array* array, unsigned size)
+{
+  assert (array);
+  assert (array->buffer);
+
+  void* tempPtr = MyRealloc(array->buffer, size * array->elemSize);
+  if (!tempPtr)
+    return BAD_ALLOC;
+
+  array->capacity = size;
+  array->buffer = tempPtr;
+  return NO_ERRORS;
+}
+
+enum ArrayErrors InsertElement (struct dinamic_array* array, unsigned index, void* element)
+{
+  assert (array);
+  assert (array->buffer);
+
+  if (index >= array->capacity)
+    return OUT_OF_BORDERS;
+
+  memcpy (array->buffer + index * array->elemSize, element, array->elemSize);
+  return NO_ERRORS;
 }

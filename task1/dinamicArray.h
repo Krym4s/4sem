@@ -5,13 +5,7 @@
 #include "string.h"
 #include "assert.h"
 
-struct dinamic_array
-{
-  unsigned capacity;
-  unsigned elemSize;
-
-  void* buffer;
-};
+struct dinamic_array;
 
 enum ArrayErrors
 {
@@ -23,9 +17,12 @@ enum ArrayErrors
   EXIST
 };
 
-enum ArrayErrors ConstructArray (struct dinamic_array* array, unsigned size, unsigned elementSize);
+unsigned GetArraySize (struct dinamic_array* array);
+unsigned GetElementSize (struct dinamic_array* array);
+
+enum ArrayErrors ConstructArray (struct dinamic_array** array, unsigned size, unsigned elementSize);
 enum ArrayErrors DestructArray (struct dinamic_array* array);
-void Dump (struct dinamic_array* array, int (*print)(void *));
+void Dump (struct dinamic_array* array, enum ArrayErrors (*print)(struct dinamic_array*, unsigned, void *));
 
 void* GetElement (struct dinamic_array* array, unsigned index);
 enum ArrayErrors InsertElement (struct dinamic_array* array, unsigned index, void* element);
