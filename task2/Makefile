@@ -6,8 +6,8 @@ CFLAGS := -g -Wall -MD --coverage -pthread
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
-thread: thread.o int_count.o
-	$(CC) $(CFLAGS) -o $@ $^
+thread: thread.o int_count.o thread_opt.o
+	$(CC) $(CFLAGS) -o $@ $^ -lm 
 
 -include *.d
 
