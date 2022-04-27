@@ -8,7 +8,6 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
     ERROR (nThreads == 0, "No threads", NO_THREADS);
         
     unsigned nProc = sysconf(_SC_NPROCESSORS_ONLN);
-    unsigned nNotUsedThreds = nThreads > nProc ? nThreads - nProc : 0; 
 
     pthread_t* threads = (pthread_t*) calloc (nProc, sizeof(*threads));
     ERROR (threads == NULL, "No memory",NO_MEMORY);
@@ -97,8 +96,9 @@ void* ThreadStart (void* resources)
         CPU_SET(numCPU, &cpu);
 
         if (pthread_setaffinity_np(id, sizeof(cpu_set_t), &cpu) < 0)
-            ERROR (true, "Afinity_error",THREAD_FAULT)
+            ERROR (true, "Afinity_error",NULL)
     }
 
     OneThreadSimpson (resources);
+    return NULL;
 }

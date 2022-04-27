@@ -36,7 +36,6 @@ void OneThreadSimpson (void* resources)
     double leftBorder = ((IntInfo*)resources)->leftBorder;
     double rightBorder = ((IntInfo*)resources)->rightBorder;
     unsigned nStep = ((IntInfo*)resources)->nStep;
-    double step = (rightBorder - leftBorder) / (nStep); 
 
     ((IntInfo*)resources)->result = SimpsonMethod (leftBorder, rightBorder, nStep, func);
 }

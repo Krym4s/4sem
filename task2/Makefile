@@ -1,7 +1,7 @@
 all: thread
 
 CC := gcc
-CFLAGS := -g -Wall -MD --coverage -pthread
+CFLAGS := -g -Wall -MD -pthread
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
@@ -14,11 +14,8 @@ thread: thread.o int_count.o thread_opt.o
 clean: 
 	rm -rf *.o *.d *.gcno *.s *.gcda *.gcov test
 
-valgrind: test
-	valgrind ./test
+valgrind: thread
+	valgrind ./thread
 
-gcov: run_tests
-	gcov -acdfu dinamicArray.c
-
-run_tests: test
-	./test
+run_tests: thread
+	./thread
