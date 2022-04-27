@@ -38,13 +38,15 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
             ERROR(true,"pthread_join non-empty Threads",THREAD_FAULT);
 
         if (idx < nThreads)
-            sum += ((ThreadInfo*)threadInfo + idx * effectiveSize)->result;
+            sum += ((ThreadInfo*)(threadInfo + idx * effectiveSize))->result;
+    
     }
 
-    printf ("%lg\n", sum);
+    printf ("%lf\n", sum);
 
     free (threadInfo);
     free (threads);
+
     return NO_ERROR;
 }
 
