@@ -19,5 +19,6 @@
 double SimpsonMethod (double leftBorder, double rightBorder, unsigned nStep, double (*function)(double parameter));
 double sqr (double parameter);
 void OneThreadSimpson (void* resources);
+void Integrate (void* resources);
 
 #endif //INT_COUNT

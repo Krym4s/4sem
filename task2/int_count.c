@@ -39,3 +39,20 @@ void OneThreadSimpson (void* resources)
 
     ((IntInfo*)resources)->result = SimpsonMethod (leftBorder, rightBorder, nStep, func);
 }
+
+void Integrate (void* resources)
+{
+    double leftBorder = ((IntInfo*)resources)->leftBorder;
+    double rightBorder = ((IntInfo*)resources)->rightBorder;
+    unsigned nStep = ((IntInfo*)resources)->nStep;
+    double step = (rightBorder - leftBorder)/nStep;
+
+    double result = 0;
+
+    for (double pos = leftBorder; pos < rightBorder; pos += step)
+    {
+        result += (step * func (pos));
+    }
+    ((IntInfo*)resources)->result = result;
+
+}

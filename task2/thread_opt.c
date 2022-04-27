@@ -37,7 +37,10 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
             sum += ((ThreadInfo*)threadInfo + idx * effectiveSize)->result;
     }
 
-    printf ("%lg", sum);
+    printf ("%lg\n", sum);
+
+    free (threadInfo);
+    free (threads);
     return NO_ERROR;
 }
 
@@ -75,7 +78,7 @@ void* ThreadPrepare (void* resources, unsigned nThreads, unsigned nProc, unsigne
         ThreadInfo* current = (ThreadInfo*)(threadInfos + idx * effectiveSize);
         current->leftBorder = leftBorder;
         current->rightBorder = leftBorder + step;
-        current->nProc = -1;
+        current->nProc = idx;
         current->nStep = nStep/realNThreads;
     }
 
@@ -99,6 +102,6 @@ void* ThreadStart (void* resources)
             ERROR (true, "Afinity_error",NULL)
     }
 
-    OneThreadSimpson (resources);
+    Integrate (resources);
     return NULL;
 }

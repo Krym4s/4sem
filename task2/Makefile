@@ -1,7 +1,7 @@
 all: thread
 
 CC := gcc
-CFLAGS := -g -Wall -MD -pthread
+CFLAGS := -g -Wall -MD -pthread -O0
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<
