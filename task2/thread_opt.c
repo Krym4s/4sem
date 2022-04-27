@@ -9,7 +9,8 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
         
     unsigned nProc = sysconf(_SC_NPROCESSORS_ONLN);
 
-    pthread_t* threads = (pthread_t*) calloc (nProc, sizeof(*threads));
+    unsigned curThreads = nProc < nThreads ? nThreads : nProc;
+    pthread_t* threads = (pthread_t*) calloc (curThreads, sizeof(*threads));
     ERROR (threads == NULL, "No memory",NO_MEMORY);
 
     /*there is no reason to launch threads more than CPUs in this task*/
@@ -20,7 +21,8 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
     void* threadInfo = ThreadPrepare (resources, nThreads, nProc, effectiveSize);
     ERROR (threadInfo == NULL, "No memory",NO_MEMORY);
 
-    for (unsigned idx = 0; idx < nProc; idx++)
+    
+    for (unsigned idx = 0; idx < curThreads; idx++)
         if (pthread_create (threads + idx, NULL, ThreadStart, threadInfo + idx * effectiveSize) != 0)
         {
             ERROR (true, "Thread not created", THREAD_FAULT)
@@ -28,7 +30,9 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
 
     double sum = 0;
 
-    for (unsigned idx = 0; idx < nProc; idx++)
+    
+
+    for (unsigned idx = 0; idx < curThreads; idx++)
     {
         if (pthread_join(threads[idx], NULL) != 0)
             ERROR(true,"pthread_join non-empty Threads",THREAD_FAULT);
@@ -55,12 +59,18 @@ void* ThreadPrepare (void* resources, unsigned nThreads, unsigned nProc, unsigne
 
     /*ThreadInfo's size equals number of CPUs*/
 
-    void* threadInfos = malloc (effectiveSize * nProc); 
+    unsigned realNThreads = nThreads < nProc ? nThreads : nProc;
+    unsigned allThreads = nThreads;
+
+    void* threadInfos;
+
+    if (allThreads > realNThreads)  
+        threadInfos = malloc (effectiveSize * allThreads); 
+    else
+        threadInfos = malloc (effectiveSize * nProc);
 
     if (threadInfos == NULL)
         return NULL;
-
-    unsigned realNThreads = nThreads < nProc ? nThreads : nProc;
     
     for (unsigned idx = 0; idx < realNThreads; idx++)
     {
@@ -82,6 +92,12 @@ void* ThreadPrepare (void* resources, unsigned nThreads, unsigned nProc, unsigne
         current->nStep = nStep/realNThreads;
     }
 
+    for (unsigned idx = nProc; idx < allThreads; idx++)
+    {
+        ThreadInfo* current = (ThreadInfo*)(threadInfos + idx * effectiveSize);
+        current->nProc = -1;
+    }
+
     return threadInfos;
 }
 
@@ -100,8 +116,10 @@ void* ThreadStart (void* resources)
 
         if (pthread_setaffinity_np(id, sizeof(cpu_set_t), &cpu) < 0)
             ERROR (true, "Afinity_error",NULL)
+
+        Integrate (resources);
     }
 
-    Integrate (resources);
+    
     return NULL;
 }
