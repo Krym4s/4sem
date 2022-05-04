@@ -30,15 +30,19 @@ enum ThreadErrors CreateThreads (unsigned nThreads, void (*function)(void* resou
 
     double sum = 0;
 
-    
+    unsigned realNThreads = nThreads < nProc ? nThreads : nProc;
 
     for (unsigned idx = 0; idx < curThreads; idx++)
     {
         if (pthread_join(threads[idx], NULL) != 0)
             ERROR(true,"pthread_join non-empty Threads",THREAD_FAULT);
 
-        if (idx < nThreads)
+        if (idx < realNThreads)
+        {
             sum += ((ThreadInfo*)(threadInfo + idx * effectiveSize))->result;
+            //printf ("%lg\n", sum);
+        }
+            
     
     }
 
@@ -57,11 +61,11 @@ void* ThreadPrepare (void* resources, unsigned nThreads, unsigned nProc, unsigne
     double leftBorder = ((ThreadInfo*)resources)->leftBorder;
     double rightBorder = ((ThreadInfo*)resources)->rightBorder;
     double nStep = ((ThreadInfo*)resources)->nStep;
-    double step = (rightBorder - leftBorder)/nProc;
 
     /*ThreadInfo's size equals number of CPUs*/
 
     unsigned realNThreads = nThreads < nProc ? nThreads : nProc;
+    double step = (rightBorder - leftBorder)/realNThreads;
     unsigned allThreads = nThreads;
 
     void* threadInfos;

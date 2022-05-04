@@ -5,7 +5,7 @@
 
 const unsigned nSegment = 80640000;
                         
-/*calculating ln(cos(x)+x^2) from 10 to 100)*/
+/*calculating ln(cos(x)+x^2) from 0 to 100)*/
 
 int main(int argc, char* argv[])
 {
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 
     sscanf (argv[1], "%d", &nThreads);
 
-    ThreadInfo info = {0,100,0,nSegment,nThreads};
+    ThreadInfo info = {10,100,0,nSegment,nThreads};
 
     CreateThreads (nThreads, NULL, &info);
 
