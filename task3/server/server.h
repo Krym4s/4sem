@@ -16,5 +16,5 @@ GetHelloMessage (int *error);
 
 int ConnectServer (struct sockaddr_in servAddr, int* error);
 
-int Compute (int socketID);
+int Compute (int socketID, unsigned nThreads);
 #endif //SERVER_H

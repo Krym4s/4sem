@@ -36,7 +36,7 @@ typedef struct {
     size_t size;
 } TasksWorkers;
 
-int DevideWork (unsigned nComp, int* nThreads, TasksWorkers** tasks, double leftBorder, double rightBorder, double nStep);
+int DevideWork (unsigned nComp, TasksWorkers** tasks, double leftBorder, double rightBorder, double nStep);
 int CreateSocket ();
 int GetConnectionsTCP (TasksWorkers* tasks);
 int SendHelloMessage ();

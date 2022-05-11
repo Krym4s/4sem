@@ -39,6 +39,6 @@ typedef struct InfoCommon {
 #define ERROR(condition, reason, err_code) do {if (condition) {printf ("Error:%s, line:%d\n",reason, __LINE__); return err_code;} }while(false);
 
 int setKeepAlive (int socketID, int keepcnt, int keepidle, int keepintvl);
-void RunServer();
-void RunClient(size_t nComputers, int* nThreads);
+void RunServer(unsigned nthreads);
+void RunClient(size_t nComputers);
 #endif // SHARED_NET

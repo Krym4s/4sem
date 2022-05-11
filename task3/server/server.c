@@ -92,7 +92,7 @@ int ConnectServer (struct sockaddr_in servAddr, int *const error) {
     return socketID;
 }
 
-int Compute(int socketID) {
+int Compute(int socketID, unsigned nThreads) {
 
     if (socketID < 0)
         return E_BADARGS;
@@ -106,7 +106,7 @@ int Compute(int socketID) {
 
     double res = 0;
 
-    ret = CreateThreads (infoInit.nProc, NULL, &infoInit);
+    ret = CreateThreads (nThreads, NULL, &infoInit);
     if (ret != SUCCESS)
         return ret;
 

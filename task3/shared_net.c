@@ -50,12 +50,12 @@ static void* GetTCPs (void* arg) {
     return NULL;
 }
 
-void RunClient(size_t nComputers, int* nThreads) {
+void RunClient(size_t nComputers) {
 
     int error = SUCCESS;
 
     TasksWorkers* tasks;
-    error = DevideWork(nComputers, nThreads, &tasks, leftBorder, rightBorder, nStep);
+    error = DevideWork(nComputers, &tasks, leftBorder, rightBorder, nStep);
     if (error != SUCCESS) {
         fprintf (stderr, "Failed\n");
         return;
@@ -102,7 +102,7 @@ void RunClient(size_t nComputers, int* nThreads) {
     return;    
 }
 
-void RunServer() {
+void RunServer(unsigned nthreads) {
 
     int error = SUCCESS;
 
@@ -119,7 +119,7 @@ void RunServer() {
         return;
     }
 
-    error = Compute(socketServer);
+    error = Compute(socketServer, nthreads);
 
     if (error != SUCCESS) {
         close (socketServer);

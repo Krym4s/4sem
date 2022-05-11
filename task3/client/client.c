@@ -86,7 +86,7 @@ int GetConnectionsTCP (TasksWorkers* tasks) {
     end_without_closing;   
 }
 
-int DevideWork (unsigned nComp, int* nThreads, TasksWorkers** task, double leftBorder, double rightBorder, double nStep)
+int DevideWork (unsigned nComp, TasksWorkers** task, double leftBorder, double rightBorder, double nStep)
 {
     if (nComp == 0)
         return E_BADARGS;
@@ -116,7 +116,6 @@ int DevideWork (unsigned nComp, int* nThreads, TasksWorkers** task, double leftB
         info = &(((*task)->task + idx)->infoWorker);
         info->leftBorder = compLeftBorder;
         info->rightBorder = compLeftBorder + compStep;
-        info->nProc = nThreads[idx];
         info->nStep = curNStep;
 
         leftBorder += compStep;
