@@ -41,6 +41,6 @@ int CreateSocket ();
 int GetConnectionsTCP (TasksWorkers* tasks);
 int SendHelloMessage ();
 void* HandlerWork (void* arg);
-int GetResult (TasksWorkers *tasks, double *res);
+int GetResult (TasksWorkers *tasks, double *res, int sum);
 
 #endif //CLIENT_INT

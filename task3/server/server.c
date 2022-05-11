@@ -94,6 +94,14 @@ int ConnectServer (struct sockaddr_in servAddr, int *const error) {
 
 int Compute(int socketID, unsigned nThreads) {
 
+    if (send(socketID, &nThreads, sizeof nThreads, MSG_NOSIGNAL) != sizeof nThreads)
+        return E_CONNECTION;
+
+    int fix;
+
+    if (recv(socketID, &fix, sizeof fix, MSG_NOSIGNAL) != sizeof fix)
+        return E_CONNECTION;
+
     if (socketID < 0)
         return E_BADARGS;
 
@@ -103,6 +111,8 @@ int Compute(int socketID, unsigned nThreads) {
 
     if (recv (socketID, &infoInit, sizeof infoInit, 0) != sizeof infoInit)
         return E_CONNECTION;
+
+    infoInit.nStep = infoInit.nStep/fix*nThreads;
 
     double res = 0;
 

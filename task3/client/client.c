@@ -93,7 +93,7 @@ int DevideWork (unsigned nComp, TasksWorkers** task, double leftBorder, double r
 
     double compLeftBorder = leftBorder;
     double compStep = (rightBorder - leftBorder) / nComp;
-    int curNStep = nStep/nComp;
+    int curNStep = nStep;
 
     *task = (TasksWorkers*) malloc (sizeof (**task));
 
@@ -191,7 +191,7 @@ void* HandlerWork (void* arg)
     return result;
 }
 
-int GetResult (TasksWorkers *tasks, double *res) {
+int GetResult (TasksWorkers *tasks, double *res, int sum) {
 
     if (!tasks || !res)
         return E_BADARGS;

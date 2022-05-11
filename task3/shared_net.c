@@ -85,7 +85,30 @@ void RunClient(size_t nComputers) {
     pthread_cancel(thSender);
 
     double res = 0;
-    if (GetResult(tasks, &res) != SUCCESS){
+
+    int threadN;
+    int sum = 0;
+
+    for (unsigned idx = 0; idx < tasks->size; idx++)
+    {
+        if (recv (tasks->task[idx].socket, &threadN, sizeof (int), 0) != sizeof (int))
+        {
+            printf ("did not get.\n");
+            return 0;
+        }
+        sum += threadN;
+    }
+
+    for (unsigned idx = 0; idx < tasks->size; idx++)
+    {
+        if (send (tasks->task[idx].socket, &sum, sizeof (int), 0) != sizeof (int))
+        {
+            printf ("did not get.\n");
+            return 0;
+        }
+    }
+
+    if (GetResult(tasks, &res, sum) != SUCCESS){
         fprintf (stderr, "Failed\n");
         for (int i = 0; i < tasks->size; i++)
             close (tasks->task[i].socket);
