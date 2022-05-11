@@ -49,9 +49,12 @@ void Integrate (void* resources)
 
     double result = 0;
 
+    double tmp = 0;
     for (double pos = leftBorder; pos < rightBorder; pos += step)
     {
         result += (step * func (pos));
+        for (unsigned idx = 0; idx < 5; idx++)
+            tmp += (step * func (pos));
     }
     ((IntInfo*)resources)->result = result;
 

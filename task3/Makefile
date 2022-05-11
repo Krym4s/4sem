@@ -1,4 +1,4 @@
-CFLAGS = -c -MD -g -Wall
+CFLAGS = -c -MD -g -Wall -std=c99
 THREADFLAG = -pthread
 INCLUDES = -I./ -I./client -I./server -I./integration
 SRC = main.c ./client/client.c shared_net.c ./server/server.c ./integration/thread_opt.c ./integration/int_count.c
