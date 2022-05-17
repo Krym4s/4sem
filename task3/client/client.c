@@ -114,11 +114,9 @@ int DevideWork (unsigned nComp, TasksWorkers** task, double leftBorder, double r
     for (unsigned idx = 0; idx < nComp; idx++)
     {
         info = &(((*task)->task + idx)->infoWorker);
-        info->leftBorder = compLeftBorder;
-        info->rightBorder = compLeftBorder + compStep;
+        info->leftBorder = leftBorder;
+        info->rightBorder = rightBorder;
         info->nStep = curNStep;
-
-        leftBorder += compStep;
     }
 
     return SUCCESS;

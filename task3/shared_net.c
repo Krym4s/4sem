@@ -86,25 +86,37 @@ void RunClient(size_t nComputers) {
 
     double res = 0;
 
-    int threadN;
+    int* threadN = (int*)calloc(tasks->size, sizeof(int));
+    int msg = 0;
+    if (threadN == NULL)
+    {
+        printf ("no memory\n");
+        return;
+    }
+
     int sum = 0;
 
     for (unsigned idx = 0; idx < tasks->size; idx++)
     {
-        if (recv (tasks->task[idx].socket, &threadN, sizeof (int), 0) != sizeof (int))
+        if (recv (tasks->task[idx].socket, &msg, sizeof (int), 0) != sizeof (int))
         {
             printf ("did not get.\n");
-            return 0;
+            return;
         }
-        sum += threadN;
+        threadN[idx] = sum;
+        sum += msg;
     }
+
+    Task task;
 
     for (unsigned idx = 0; idx < tasks->size; idx++)
     {
-        if (send (tasks->task[idx].socket, &sum, sizeof (int), 0) != sizeof (int))
+        task.nThreads = sum;
+        task.begThread = threadN[idx];
+        if (send (tasks->task[idx].socket, &task, sizeof (Task), 0) != sizeof (Task))
         {
-            printf ("did not get.\n");
-            return 0;
+            printf ("did not send.\n");
+            return;
         }
     }
 
@@ -122,6 +134,7 @@ void RunClient(size_t nComputers) {
             close (tasks->task[i].socket);
 
     free (tasks);
+    free (threadN);
     return;    
 }
 

@@ -36,6 +36,11 @@ typedef struct InfoCommon {
     size_t nComputers;
 } InfoCommon;
 
+typedef struct {
+    int nThreads;
+    int begThread;
+} Task;
+
 #define ERROR(condition, reason, err_code) do {if (condition) {printf ("Error:%s, line:%d\n",reason, __LINE__); return err_code;} }while(false);
 
 int setKeepAlive (int socketID, int keepcnt, int keepidle, int keepintvl);

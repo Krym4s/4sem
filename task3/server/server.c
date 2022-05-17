@@ -97,7 +97,7 @@ int Compute(int socketID, unsigned nThreads) {
     if (send(socketID, &nThreads, sizeof nThreads, MSG_NOSIGNAL) != sizeof nThreads)
         return E_CONNECTION;
 
-    int fix;
+    Task fix;
 
     if (recv(socketID, &fix, sizeof fix, MSG_NOSIGNAL) != sizeof fix)
         return E_CONNECTION;
@@ -112,7 +112,10 @@ int Compute(int socketID, unsigned nThreads) {
     if (recv (socketID, &infoInit, sizeof infoInit, 0) != sizeof infoInit)
         return E_CONNECTION;
 
-    infoInit.nStep = infoInit.nStep/fix*nThreads;
+    infoInit.nStep = infoInit.nStep/fix.nThreads*nThreads;
+    double threadSeg = (infoInit.rightBorder - infoInit.leftBorder)/fix.nThreads;
+    infoInit.leftBorder = infoInit.leftBorder + threadSeg * fix.begThread;
+    infoInit.rightBorder = infoInit.leftBorder + threadSeg * nThreads;
 
     double res = 0;
 
